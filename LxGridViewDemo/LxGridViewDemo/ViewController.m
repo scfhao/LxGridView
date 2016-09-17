@@ -31,10 +31,11 @@ static CGFloat const HOME_BUTTON_BOTTOM_MARGIN = 9;
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
     for (int i = 0; i < 15; i++) {
-        
+        NSInteger badge = arc4random_uniform(1000);
         NSMutableDictionary * dataDict = [[NSMutableDictionary alloc]init];
         [dataDict setValue:[NSString stringWithFormat:@"App %d", i] forKey:@"index"];
         [dataDict setValue:[UIImage imageNamed:[NSString stringWithFormat:@"%i", i]] forKey:@"icon_image"];
+        [dataDict setValue:@(badge) forKey:@"badge"];
         [self.dataArray addObject:dataDict];
     }
     
@@ -176,7 +177,7 @@ static CGFloat const HOME_BUTTON_BOTTOM_MARGIN = 9;
     NSDictionary * dataDict = self.dataArray[indexPath.item];
     cell.title = dataDict[@"index"];
     cell.iconImageView.image = dataDict[@"icon_image"];
-    
+    cell.badge = [dataDict[@"badge"]integerValue];
     return cell;
 }
 

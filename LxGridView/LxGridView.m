@@ -8,8 +8,6 @@
 
 @implementation LxGridView
 
-@synthesize editing = _editing;
-
 - (void)setEditing:(BOOL)editing
 {
     _editing = editing;
@@ -18,11 +16,6 @@
         LxGridViewCell * gridViewCell = (LxGridViewCell *)cell;
         gridViewCell.editing = editing;
     }
-}
-
-- (BOOL)editing
-{
-    return _editing;
 }
 
 @end

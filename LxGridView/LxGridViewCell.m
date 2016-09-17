@@ -7,12 +7,13 @@
 
 
 static NSString * const kVibrateAnimation = @stringify(kVibrateAnimation);
-static CGFloat const VIBRATE_DURATION = 0.1;
-static CGFloat const VIBRATE_RADIAN = M_PI / 96;
+//static CGFloat const VIBRATE_DURATION = 0.1;
+//static CGFloat const VIBRATE_RADIAN = M_PI / 96;
+static CGFloat const BADGE_HEIGHT = 20.0;
 
 @interface LxGridViewCell ()
 
-@property (nonatomic,assign) BOOL vibrating;
+//@property (nonatomic,assign) BOOL vibrating;
 
 @end
 
@@ -20,8 +21,8 @@ static CGFloat const VIBRATE_RADIAN = M_PI / 96;
 {
     UIButton * _deleteButton;
     UILabel * _titleLabel;
+    UILabel *_badgeLabel;
 }
-@synthesize editing = _editing;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -41,6 +42,17 @@ static CGFloat const VIBRATE_RADIAN = M_PI / 96;
     self.iconImageView.layer.masksToBounds = YES;
     [self.contentView addSubview:self.iconImageView];
     
+    _badgeLabel = [UILabel new];
+    _badgeLabel.layer.masksToBounds = YES;
+    _badgeLabel.font = [UIFont boldSystemFontOfSize:12];
+    _badgeLabel.textColor = [UIColor whiteColor];
+    _badgeLabel.backgroundColor = [UIColor redColor];
+    _badgeLabel.layer.cornerRadius = BADGE_HEIGHT / 2;
+    _badgeLabel.layer.borderWidth = 1;
+    _badgeLabel.layer.borderColor = [UIColor whiteColor].CGColor;
+    _badgeLabel.textAlignment = NSTextAlignmentCenter;
+    [self.contentView addSubview:_badgeLabel];
+    
     _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_deleteButton setImage:[UIImage imageNamed:@"delete_collect_btn"] forState:UIControlStateNormal];
     [self.contentView addSubview:_deleteButton];
@@ -56,6 +68,7 @@ static CGFloat const VIBRATE_RADIAN = M_PI / 96;
     self.iconImageView.translatesAutoresizingMaskIntoConstraints = NO;
     _deleteButton.translatesAutoresizingMaskIntoConstraints = NO;
     _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    _badgeLabel.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
 - (void)layoutSubviews
@@ -138,6 +151,20 @@ static CGFloat const VIBRATE_RADIAN = M_PI / 96;
 
     [self.contentView addConstraints:@[deleteButtonLeftConstraint,deleteButtonTopConstraint,deleteButtonWidthConstraint,deleteButtonHeightConstraint]];
     
+    NSLayoutConstraint * badgeLabelTopConstraint =
+    [NSLayoutConstraint constraintWithItem:_badgeLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1 constant:-BADGE_HEIGHT/2];
+    
+    NSLayoutConstraint * badgeLabelRightConstraint =
+    [NSLayoutConstraint constraintWithItem:_badgeLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1 constant:BADGE_HEIGHT/2];
+    
+    NSLayoutConstraint * badgeLabelHeightConstraint =
+    [NSLayoutConstraint constraintWithItem:_badgeLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:BADGE_HEIGHT];
+    
+    NSLayoutConstraint * badgeLabelWidthConstraint =
+    [NSLayoutConstraint constraintWithItem:_badgeLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:BADGE_HEIGHT];
+    
+    [self.contentView addConstraints:@[badgeLabelTopConstraint, badgeLabelRightConstraint, badgeLabelHeightConstraint, badgeLabelWidthConstraint]];
+    
     NSLayoutConstraint * centerXConstraint =
     [NSLayoutConstraint constraintWithItem:_titleLabel
                                  attribute:NSLayoutAttributeCenterX
@@ -191,38 +218,39 @@ static CGFloat const VIBRATE_RADIAN = M_PI / 96;
     }
 }
 
-- (BOOL)vibrating
-{
-    return [self.iconImageView.layer.animationKeys containsObject:kVibrateAnimation];
-}
-
-- (void)setVibrating:(BOOL)vibrating
-{
-    BOOL _vibrating = [self.layer.animationKeys containsObject:kVibrateAnimation];
-    
-    if (_vibrating && !vibrating) {
-        [self.layer removeAnimationForKey:kVibrateAnimation];
-    }
-    else if (!_vibrating && vibrating) {
-        CABasicAnimation * vibrateAnimation = [CABasicAnimation animationWithKeyPath:@stringify(transform.rotation.z)];
-        vibrateAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        vibrateAnimation.fromValue = @(- VIBRATE_RADIAN);
-        vibrateAnimation.toValue = @(VIBRATE_RADIAN);
-        vibrateAnimation.autoreverses = YES;
-        vibrateAnimation.duration = VIBRATE_DURATION;
-        vibrateAnimation.repeatCount = CGFLOAT_MAX;
-        [self.layer addAnimation:vibrateAnimation forKey:kVibrateAnimation];
-    }
-}
+//- (BOOL)vibrating
+//{
+//    return [self.iconImageView.layer.animationKeys containsObject:kVibrateAnimation];
+//}
+//
+//- (void)setVibrating:(BOOL)vibrating
+//{
+//    BOOL _vibrating = [self.layer.animationKeys containsObject:kVibrateAnimation];
+//    
+//    if (_vibrating && !vibrating) {
+//        [self.layer removeAnimationForKey:kVibrateAnimation];
+//    }
+//    else if (!_vibrating && vibrating) {
+//        CABasicAnimation * vibrateAnimation = [CABasicAnimation animationWithKeyPath:@stringify(transform.rotation.z)];
+//        vibrateAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+//        vibrateAnimation.fromValue = @(- VIBRATE_RADIAN);
+//        vibrateAnimation.toValue = @(VIBRATE_RADIAN);
+//        vibrateAnimation.autoreverses = YES;
+//        vibrateAnimation.duration = VIBRATE_DURATION;
+//        vibrateAnimation.repeatCount = CGFLOAT_MAX;
+//        [self.layer addAnimation:vibrateAnimation forKey:kVibrateAnimation];
+//    }
+//}
 
 - (BOOL)editing
 {
-    return self.vibrating;
+//    return self.vibrating;
+    return !_deleteButton.hidden;
 }
 
 - (void)setEditing:(BOOL)editing
 {
-    self.vibrating = editing;
+//    self.vibrating = editing;
     _deleteButton.hidden = !editing;
 }
 
@@ -236,12 +264,18 @@ static CGFloat const VIBRATE_RADIAN = M_PI / 96;
     return _titleLabel.text;
 }
 
+- (void)setBadge:(NSInteger)badge {
+    _badgeLabel.text = @(badge).stringValue;
+    _badgeLabel.hidden = badge == 0;
+}
+
 - (UIView *)snapshotView
 {
     UIView * snapshotView = [[UIView alloc]init];
     
     UIView * cellSnapshotView = nil;
     UIView * deleteButtonSnapshotView = nil;
+    UIView * badgeLabelSnapshotView = nil;
     
     if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)]) {
         cellSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
@@ -265,20 +299,34 @@ static CGFloat const VIBRATE_RADIAN = M_PI / 96;
         deleteButtonSnapshotView = [[UIImageView alloc]initWithImage:deleteButtonSnapshotImage];
     }
     
+    if ([_badgeLabel respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)]) {
+        badgeLabelSnapshotView = [_badgeLabel snapshotViewAfterScreenUpdates:NO];
+    }
+    else {
+        UIGraphicsBeginImageContextWithOptions(_badgeLabel.bounds.size, _badgeLabel.opaque, 0);
+        [_badgeLabel.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *badgeLableSnapshotImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        badgeLabelSnapshotView = [[UIImageView alloc]initWithImage:badgeLableSnapshotImage];
+    }
+    
     snapshotView.frame = CGRectMake(-deleteButtonSnapshotView.frame.size.width / 2,
                                     -deleteButtonSnapshotView.frame.size.height / 2,
-                                    deleteButtonSnapshotView.frame.size.width / 2 + cellSnapshotView.frame.size.width,
-                                    deleteButtonSnapshotView.frame.size.height / 2 + cellSnapshotView.frame.size.height);
+                                    deleteButtonSnapshotView.frame.size.width / 2 + cellSnapshotView.frame.size.width + badgeLabelSnapshotView.frame.size.width / 2,
+                                    badgeLabelSnapshotView.frame.size.height / 2 + cellSnapshotView.frame.size.height);
     cellSnapshotView.frame = CGRectMake(deleteButtonSnapshotView.frame.size.width / 2,
                                         deleteButtonSnapshotView.frame.size.height / 2,
                                         cellSnapshotView.frame.size.width,
                                         cellSnapshotView.frame.size.height);
-    deleteButtonSnapshotView.frame = CGRectMake(0, 0,
+    deleteButtonSnapshotView.frame = CGRectMake(0, CGRectGetHeight(badgeLabelSnapshotView.frame) / 2 - CGRectGetHeight(deleteButtonSnapshotView.frame) / 2,
                                                 deleteButtonSnapshotView.frame.size.width,
                                                 deleteButtonSnapshotView.frame.size.height);
     
+    badgeLabelSnapshotView.frame = CGRectMake(CGRectGetWidth(cellSnapshotView.frame) + CGRectGetWidth(deleteButtonSnapshotView.frame) / 2 - CGRectGetWidth(badgeLabelSnapshotView.frame) / 2, 0, CGRectGetWidth(badgeLabelSnapshotView.frame), CGRectGetHeight(badgeLabelSnapshotView.frame));
+    
     [snapshotView addSubview:cellSnapshotView];
     [snapshotView addSubview:deleteButtonSnapshotView];
+    [snapshotView addSubview:badgeLabelSnapshotView];
     
     return snapshotView;
 }

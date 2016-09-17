@@ -12,6 +12,6 @@
 
 @interface LxGridView : UICollectionView
 
-@property (nonatomic,assign) BOOL editing;
+@property (nonatomic, assign) BOOL editing;
 
 @end

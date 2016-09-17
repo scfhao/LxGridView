@@ -19,10 +19,11 @@ static CGFloat const ICON_CORNER_RADIUS = 10;
 
 @interface LxGridViewCell : UICollectionViewCell
 
-@property (nonatomic,assign) id<LxGridViewCellDelegate> delegate;
-@property (nonatomic,retain) UIImageView * iconImageView;
-@property (nonatomic,copy) NSString * title;
-@property (nonatomic,assign) BOOL editing;
+@property (nonatomic, weak) id<LxGridViewCellDelegate> delegate;
+@property (nonatomic, strong) UIImageView * iconImageView;
+@property (nonatomic, assign) NSInteger badge;
+@property (nonatomic, copy) NSString * title;
+@property (nonatomic, assign) BOOL editing;
 
 - (UIView *)snapshotView;
 
