@@ -36,37 +36,32 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
 
 #pragma mark - setup
 
-- (void)dealloc
-{
+- (void)dealloc {
     [_displayLink invalidate];
     
     [self removeGestureRecognizers];
     [self removeObserver:self forKeyPath:@stringify(collectionView)];
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
     if (self = [super init]) {
         [self setup];
     }
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
+- (instancetype)initWithCoder:(NSCoder *)coder {
     if (self = [super initWithCoder:coder]) {
         [self setup];
     }
     return self;
 }
 
-- (void)setup
-{
+- (void)setup {
     [self addObserver:self forKeyPath:@stringify(collectionView) options:NSKeyValueObservingOptionNew context:nil];
 }
 
-- (void)addGestureRecognizers
-{
+- (void)addGestureRecognizers {
     self.collectionView.userInteractionEnabled = YES;
     
     _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressGestureRecognizerTriggerd:)];
@@ -89,8 +84,7 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 }
 
-- (void)removeGestureRecognizers
-{
+- (void)removeGestureRecognizers {
     if (_longPressGestureRecognizer) {
         if (_longPressGestureRecognizer.view) {
             [_longPressGestureRecognizer.view removeGestureRecognizer:_longPressGestureRecognizer];
@@ -110,25 +104,21 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
 
 #pragma mark - getter and setter implementation
 
-- (id<LxGridViewDataSource>)dataSource
-{
+- (id<LxGridViewDataSource>)dataSource {
     return (id<LxGridViewDataSource>)self.collectionView.dataSource;
 }
 
-- (id<LxGridViewDelegateFlowLayout>)delegate
-{
+- (id<LxGridViewDelegateFlowLayout>)delegate {
     return (id<LxGridViewDelegateFlowLayout>)self.collectionView.delegate;
 }
 
-- (void)setEditing:(BOOL)editing
-{
+- (void)setEditing:(BOOL)editing {
     NSCAssert([self.collectionView isKindOfClass:[LxGridView class]] || self.collectionView == nil, @"LxGridViewFlowLayout: Must use LxGridView as your collectionView class!");
     LxGridView * gridView = (LxGridView *)self.collectionView;
     gridView.editing = editing;
 }
 
-- (BOOL)editing
-{
+- (BOOL)editing {
     NSCAssert([self.collectionView isKindOfClass:[LxGridView class]] || self.collectionView == nil, @"LxGridViewFlowLayout: Must use LxGridView as your collectionView class!");
     LxGridView * gridView = (LxGridView *)self.collectionView;
     return gridView.editing;
@@ -136,8 +126,7 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
 
 #pragma mark - override UICollectionViewLayout methods
 
-- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
-{
+- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSArray * layoutAttributesForElementsInRect = [super layoutAttributesForElementsInRect:rect];
     
     for (UICollectionViewLayoutAttributes * layoutAttributes in layoutAttributesForElementsInRect) {
@@ -149,8 +138,7 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
     return layoutAttributesForElementsInRect;
 }
 
-- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewLayoutAttributes * layoutAttributes = [super layoutAttributesForItemAtIndexPath:indexPath];
     if (layoutAttributes.representedElementCategory == UICollectionElementCategoryCell) {
         layoutAttributes.hidden = [layoutAttributes.indexPath isEqual:_movingItemIndexPath];
@@ -160,16 +148,15 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
 
 #pragma mark - gesture
 
-- (void)setPanGestureRecognizerEnable:(BOOL)panGestureRecognizerEnable
-{
+- (void)setPanGestureRecognizerEnable:(BOOL)panGestureRecognizerEnable {
     _panGestureRecognizer.enabled = panGestureRecognizerEnable;
 }
 
-- (BOOL)panGestureRecognizerEnable
-{
+- (BOOL)panGestureRecognizerEnable {
     return _panGestureRecognizer.enabled;
 }
 
+// TODO: To read 1
 - (void)longPressGestureRecognizerTriggerd:(UILongPressGestureRecognizer *)longPress
 {
     switch (longPress.state) {
@@ -317,7 +304,7 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
             break;
     }
 }
-
+// To read 2
 - (void)panGestureRecognizerTriggerd:(UIPanGestureRecognizer *)pan
 {
     switch (pan.state) {
@@ -371,16 +358,14 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
     }
 }
 
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
-{
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if ([_panGestureRecognizer isEqual:gestureRecognizer] && self.editing) {
         return _movingItemIndexPath != nil;
     }
     return YES;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     //  only _longPressGestureRecognizer and _panGestureRecognizer can recognize simultaneously
     if ([_longPressGestureRecognizer isEqual:gestureRecognizer]) {
         return [_panGestureRecognizer isEqual:otherGestureRecognizer];
@@ -392,7 +377,7 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
 }
 
 #pragma mark - displayLink
-
+// To read 3
 - (void)displayLinkTriggered:(CADisplayLink *)displayLink
 {
     if (_remainSecondsToBeginEditing <= 0) {
@@ -407,8 +392,7 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
 
 #pragma mark - KVO and notification
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@stringify(collectionView)]) {
         if (self.collectionView) {
             [self addGestureRecognizers];
@@ -416,11 +400,12 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
         else {
             [self removeGestureRecognizers];
         }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
-- (void)applicationWillResignActive:(NSNotification *)notificaiton
-{
+- (void)applicationWillResignActive:(NSNotification *)notificaiton {
     _panGestureRecognizer.enabled = NO;
     _panGestureRecognizer.enabled = YES;
 }
