@@ -323,7 +323,7 @@ static CGFloat const BADGE_HEIGHT = 20.0;
                                                 deleteButtonSnapshotView.frame.size.height);
     
     badgeLabelSnapshotView.frame = CGRectMake(CGRectGetWidth(cellSnapshotView.frame) + CGRectGetWidth(deleteButtonSnapshotView.frame) / 2 - CGRectGetWidth(badgeLabelSnapshotView.frame) / 2, 0, CGRectGetWidth(badgeLabelSnapshotView.frame), CGRectGetHeight(badgeLabelSnapshotView.frame));
-    
+    badgeLabelSnapshotView.hidden = _badgeLabel.hidden;
     [snapshotView addSubview:cellSnapshotView];
     [snapshotView addSubview:deleteButtonSnapshotView];
     [snapshotView addSubview:badgeLabelSnapshotView];
