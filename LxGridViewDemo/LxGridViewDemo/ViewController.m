@@ -157,7 +157,7 @@ static CGFloat const HOME_BUTTON_BOTTOM_MARGIN = 9;
 
 - (void)homeButtonClicked:(UIButton *)btn
 {
-    _gridView.editing = NO;
+    _gridView.editing = !_gridView.editing;
 }
 
 #pragma mark - delegate

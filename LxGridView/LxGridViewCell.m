@@ -5,15 +5,10 @@
 
 #import "LxGridView.h"
 
-
 static NSString * const kVibrateAnimation = @stringify(kVibrateAnimation);
-//static CGFloat const VIBRATE_DURATION = 0.1;
-//static CGFloat const VIBRATE_RADIAN = M_PI / 96;
 static CGFloat const BADGE_HEIGHT = 20.0;
 
 @interface LxGridViewCell ()
-
-//@property (nonatomic,assign) BOOL vibrating;
 
 @end
 
@@ -54,9 +49,8 @@ static CGFloat const BADGE_HEIGHT = 20.0;
     [self.contentView addSubview:_badgeLabel];
     
     _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_deleteButton setImage:[UIImage imageNamed:@"delete_collect_btn"] forState:UIControlStateNormal];
+    [_deleteButton setBackgroundImage:[UIImage imageNamed:@"delete_collect_btn"] forState:UIControlStateNormal];
     [self.contentView addSubview:_deleteButton];
-    _deleteButton.hidden = YES;
     
     _titleLabel = [[UILabel alloc]init];
     _titleLabel.text = @"title";
@@ -218,39 +212,13 @@ static CGFloat const BADGE_HEIGHT = 20.0;
     }
 }
 
-//- (BOOL)vibrating
-//{
-//    return [self.iconImageView.layer.animationKeys containsObject:kVibrateAnimation];
-//}
-//
-//- (void)setVibrating:(BOOL)vibrating
-//{
-//    BOOL _vibrating = [self.layer.animationKeys containsObject:kVibrateAnimation];
-//    
-//    if (_vibrating && !vibrating) {
-//        [self.layer removeAnimationForKey:kVibrateAnimation];
-//    }
-//    else if (!_vibrating && vibrating) {
-//        CABasicAnimation * vibrateAnimation = [CABasicAnimation animationWithKeyPath:@stringify(transform.rotation.z)];
-//        vibrateAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-//        vibrateAnimation.fromValue = @(- VIBRATE_RADIAN);
-//        vibrateAnimation.toValue = @(VIBRATE_RADIAN);
-//        vibrateAnimation.autoreverses = YES;
-//        vibrateAnimation.duration = VIBRATE_DURATION;
-//        vibrateAnimation.repeatCount = CGFLOAT_MAX;
-//        [self.layer addAnimation:vibrateAnimation forKey:kVibrateAnimation];
-//    }
-//}
-
 - (BOOL)editing
 {
-//    return self.vibrating;
     return !_deleteButton.hidden;
 }
 
 - (void)setEditing:(BOOL)editing
 {
-//    self.vibrating = editing;
     _deleteButton.hidden = !editing;
 }
 
