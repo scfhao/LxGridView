@@ -6,7 +6,7 @@
 #import "LxGridView.h"
 
 
-static CGFloat const PRESS_TO_MOVE_MIN_DURATION = 0.1;
+static CGFloat const PRESS_TO_MOVE_MIN_DURATION = 0.3;
 static CGFloat const MIN_PRESS_TO_BEGIN_EDITING_DURATION = 0.6;
 
 CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
@@ -58,6 +58,7 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
 }
 
 - (void)setup {
+    self.canStopEditing = YES;
     [self addObserver:self forKeyPath:@stringify(collectionView) options:NSKeyValueObservingOptionNew context:nil];
 }
 
@@ -174,7 +175,6 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
             if (self.editing == NO) {
                 return;
             }
-            
             _movingItemIndexPath = [self.collectionView indexPathForItemAtPoint:[longPress locationInView:self.collectionView]];
             
             if ([self.dataSource respondsToSelector:@selector(collectionView:canMoveItemAtIndexPath:)] && [self.dataSource collectionView:self.collectionView canMoveItemAtIndexPath:_movingItemIndexPath] == NO) {
@@ -191,46 +191,21 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
             LxGridViewCell * sourceGridViewCell = (LxGridViewCell *)sourceCollectionViewCell;
             
             _beingMovedPromptView = [[UIView alloc]initWithFrame:CGRectOffset(sourceCollectionViewCell.frame, -LxGridView_DELETE_RADIUS, -LxGridView_DELETE_RADIUS)];
-            
-            sourceCollectionViewCell.highlighted = YES;
-            UIView * highlightedSnapshotView = [sourceGridViewCell snapshotView];
-            highlightedSnapshotView.frame = sourceGridViewCell.bounds;
-            highlightedSnapshotView.alpha = 1;
 
             sourceCollectionViewCell.highlighted = NO;
             UIView * snapshotView = [sourceGridViewCell snapshotView];
             snapshotView.frame = sourceGridViewCell.bounds;
-            snapshotView.alpha = 0;
             
             [_beingMovedPromptView addSubview:snapshotView];
-            [_beingMovedPromptView addSubview:highlightedSnapshotView];
             [self.collectionView addSubview:_beingMovedPromptView];
             
             _sourceItemCollectionViewCellCenter = sourceCollectionViewCell.center;
             
-            typeof(self) __weak weakSelf = self;
-            [UIView animateWithDuration:0
-                                  delay:0
-                                options:UIViewAnimationOptionBeginFromCurrentState
-                             animations:^{
-
-                                 typeof(self) __strong strongSelf = weakSelf;
-                                 if (strongSelf) {
-                                     highlightedSnapshotView.alpha = 0;
-                                     snapshotView.alpha = 1;
-                                 }
-                             }
-                             completion:^(BOOL finished) {
-                                 
-                                 typeof(self) __strong strongSelf = weakSelf;
-                                 if (strongSelf) {
-                                     [highlightedSnapshotView removeFromSuperview];
-                                     
-                                     if ([strongSelf.delegate respondsToSelector:@selector(collectionView:layout:didBeginDraggingItemAtIndexPath:)]) {
-                                         [strongSelf.delegate collectionView:strongSelf.collectionView layout:strongSelf didBeginDraggingItemAtIndexPath:_movingItemIndexPath];
-                                     }
-                                 }
-                             }];
+            
+             if ([self.delegate respondsToSelector:@selector(collectionView:layout:didBeginDraggingItemAtIndexPath:)]) {
+                 [self.delegate collectionView:self.collectionView layout:self didBeginDraggingItemAtIndexPath:_movingItemIndexPath];
+             }
+            
             [self invalidateLayout];
         }
             break;
@@ -281,6 +256,8 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
                                          }
                                      }
                                  }];
+            } else {
+                self.canStopEditing = NO;
             }
         }
             break;
@@ -346,13 +323,15 @@ CG_INLINE CGPoint CGPointOffset(CGPoint point, CGFloat dx, CGFloat dy)
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if ([_panGestureRecognizer isEqual:gestureRecognizer] && self.editing) {
+        UIPanGestureRecognizer *pan = (UIPanGestureRecognizer *)gestureRecognizer;
+        CGPoint translation = [pan translationInView:self.collectionView];
+        NSLog(@"%@", NSStringFromCGPoint(translation));
         return _movingItemIndexPath != nil;
     }
     return YES;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    //  only _longPressGestureRecognizer and _panGestureRecognizer can recognize simultaneously
     if ([_longPressGestureRecognizer isEqual:gestureRecognizer]) {
         return [_panGestureRecognizer isEqual:otherGestureRecognizer];
     }

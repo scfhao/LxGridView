@@ -9,6 +9,7 @@
 @interface LxGridViewFlowLayout : UICollectionViewFlowLayout
 
 @property (nonatomic,assign) BOOL panGestureRecognizerEnable;
+@property (nonatomic,assign) BOOL canStopEditing;
 
 @end
 

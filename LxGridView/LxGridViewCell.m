@@ -7,6 +7,7 @@
 
 static NSString * const kVibrateAnimation = @stringify(kVibrateAnimation);
 static CGFloat const BADGE_HEIGHT = 20.0;
+static CGFloat const DELETE_WIDTH = 30.0;
 
 @interface LxGridViewCell ()
 
@@ -49,7 +50,7 @@ static CGFloat const BADGE_HEIGHT = 20.0;
     [self.contentView addSubview:_badgeLabel];
     
     _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_deleteButton setBackgroundImage:[UIImage imageNamed:@"delete_collect_btn"] forState:UIControlStateNormal];
+    [_deleteButton setImage:[UIImage imageNamed:@"delete_collect_btn"] forState:UIControlStateNormal];
     [self.contentView addSubview:_deleteButton];
     
     _titleLabel = [[UILabel alloc]init];
@@ -132,7 +133,7 @@ static CGFloat const BADGE_HEIGHT = 20.0;
                                     toItem:nil
                                  attribute:NSLayoutAttributeWidth
                                 multiplier:1
-                                  constant:_deleteButton.currentImage.size.width];
+                                  constant:DELETE_WIDTH];
     
     NSLayoutConstraint * deleteButtonHeightConstraint =
     [NSLayoutConstraint constraintWithItem:_deleteButton
@@ -141,7 +142,7 @@ static CGFloat const BADGE_HEIGHT = 20.0;
                                     toItem:nil
                                  attribute:NSLayoutAttributeHeight
                                 multiplier:1
-                                  constant:_deleteButton.currentImage.size.height];
+                                  constant:DELETE_WIDTH];
 
     [self.contentView addConstraints:@[deleteButtonLeftConstraint,deleteButtonTopConstraint,deleteButtonWidthConstraint,deleteButtonHeightConstraint]];
     
@@ -286,11 +287,11 @@ static CGFloat const BADGE_HEIGHT = 20.0;
                                         deleteButtonSnapshotView.frame.size.height / 2,
                                         cellSnapshotView.frame.size.width,
                                         cellSnapshotView.frame.size.height);
-    deleteButtonSnapshotView.frame = CGRectMake(0, CGRectGetHeight(badgeLabelSnapshotView.frame) / 2 - CGRectGetHeight(deleteButtonSnapshotView.frame) / 2,
+    deleteButtonSnapshotView.frame = CGRectMake(0, CGRectGetHeight(badgeLabelSnapshotView.frame) / 2 - CGRectGetHeight(deleteButtonSnapshotView.frame) / 2 + 2,
                                                 deleteButtonSnapshotView.frame.size.width,
                                                 deleteButtonSnapshotView.frame.size.height);
     
-    badgeLabelSnapshotView.frame = CGRectMake(CGRectGetWidth(cellSnapshotView.frame) + CGRectGetWidth(deleteButtonSnapshotView.frame) / 2 - CGRectGetWidth(badgeLabelSnapshotView.frame) / 2 - 1, 0, CGRectGetWidth(badgeLabelSnapshotView.frame), CGRectGetHeight(badgeLabelSnapshotView.frame));
+    badgeLabelSnapshotView.frame = CGRectMake(CGRectGetWidth(cellSnapshotView.frame) + CGRectGetWidth(deleteButtonSnapshotView.frame) / 2 - CGRectGetWidth(badgeLabelSnapshotView.frame) / 2 - 1, 2, CGRectGetWidth(badgeLabelSnapshotView.frame), CGRectGetHeight(badgeLabelSnapshotView.frame));
     badgeLabelSnapshotView.hidden = _badgeLabel.hidden;
     [snapshotView addSubview:cellSnapshotView];
     [snapshotView addSubview:deleteButtonSnapshotView];

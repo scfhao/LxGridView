@@ -188,6 +188,18 @@ static CGFloat const HOME_BUTTON_BOTTOM_MARGIN = 9;
     [self.dataArray insertObject:dataDict atIndex:destinationIndexPath.item];
 }
 
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    LxGridViewFlowLayout *layout = (LxGridViewFlowLayout *)collectionView.collectionViewLayout;
+    if (_gridView.editing) {
+        if ([layout canStopEditing]) {
+            _gridView.editing = NO;
+        }
+        layout.canStopEditing = YES;
+        return;
+    }
+    NSLog(@"正常点击");
+}
+
 - (void)deleteButtonClickedInGridViewCell:(LxGridViewCell *)gridViewCell
 {
     NSIndexPath * gridViewCellIndexPath = [_gridView indexPathForCell:gridViewCell];
